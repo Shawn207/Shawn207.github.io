@@ -1,0 +1,11 @@
+---
+import { site } from '../data/site';
+
+const built = new Date();
+const updated = built.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<footer class="wrap footer">
+  <p>© {built.getUTCFullYear()} {site.name}</p>
+  <p>Last updated {updated}</p>
+</footer>

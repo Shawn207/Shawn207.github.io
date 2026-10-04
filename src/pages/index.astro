@@ -1,0 +1,156 @@
+---
+import Base from '../layouts/Base.astro';
+import Ext from '../components/Ext.astro';
+import LinkChips from '../components/LinkChips.astro';
+import ProjectTile from '../components/ProjectTile.astro';
+import Viewport from '../components/Viewport.astro';
+import { news } from '../data/news';
+import { projects } from '../data/projects';
+import { publications } from '../data/publications';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  jobTitle: 'Ph.D. student',
+  affiliation: { '@type': 'CollegeOrUniversity', name: site.affiliation },
+  sameAs: [site.links.github, site.links.scholar, site.links.linkedin],
+};
+
+const profiles = [
+  { label: 'GitHub', href: site.links.github, text: 'github.com/Shawn207' },
+  { label: 'Google Scholar', href: site.links.scholar, text: 'Google Scholar profile' },
+  { label: 'LinkedIn', href: site.links.linkedin, text: 'linkedin.com/in/zhan-xiaoyang' },
+];
+---
+
+<Base jsonLd={jsonLd}>
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <h1 class="hero-title" id="hero-title">{site.headline}</h1>
+      <div class="hero-rest">
+        <p class="hero-lede">{site.bio}</p>
+        {site.seeking && <p class="hero-seeking">{site.seeking}</p>}
+        <ul class="hero-links">
+          <li>
+            <a href={url('/#contact')} data-user={site.email.user} data-domain={site.email.domain}>Email</a>
+          </li>
+          {profiles.map((p) => <li><Ext href={p.href}>{p.label}</Ext></li>)}
+          <li><a href={url('/cv/')}>CV</a></li>
+        </ul>
+      </div>
+    </div>
+    <Viewport />
+  </section>
+
+  <section class="wrap section split" aria-labelledby="recent-h">
+    <div class="rail"><h2 id="recent-h">Recent</h2></div>
+    <ul class="news">
+      {
+        news.map((item) => (
+          <li>
+            <time>{item.date}</time>
+            <p>{item.href ? <Ext href={item.href}>{item.text}</Ext> : item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="wrap section split" id="projects" aria-labelledby="projects-h">
+    <div class="rail"><h2 id="projects-h">Projects</h2></div>
+    <div class="projects">
+      {projects.map((project, i) => <ProjectTile project={project} feature={i === 0} />)}
+    </div>
+  </section>
+
+  <section class="wrap section split" id="publications" aria-labelledby="publications-h">
+    <div class="rail"><h2 id="publications-h">Publications</h2></div>
+    <div>
+      <ol class="pubs">
+        {
+          publications.map((pub) => (
+            <li class="pub">
+              <span class="pub-year">{pub.year}</span>
+              <div>
+                <h3 class="pub-title">{pub.href ? <Ext href={pub.href}>{pub.title}</Ext> : pub.title}</h3>
+                <p class="pub-authors">
+                  {pub.authors.map((a, i) => (
+                    <><span class:list={{ me: a.self }}>{a.name}{a.coFirst ? '*' : ''}</span>{i < pub.authors.length - 1 ? ', ' : ''}</>
+                  ))}
+                </p>
+                <p class="pub-venue">
+                  {pub.venue}.{pub.note ? ` ${pub.note}` : ''}
+                </p>
+                <LinkChips links={pub.links} />
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="pubs-foot">
+        * Equal contribution. <Ext href={site.links.scholar}>All publications on Google Scholar</Ext>.
+      </p>
+    </div>
+  </section>
+
+  <section class="wrap section split" id="research" aria-labelledby="research-h">
+    <div class="rail"><h2 id="research-h">Research</h2></div>
+    <div class="themes">
+      {
+        site.themes.map((theme) => (
+          <div class="theme">
+            <h3>{theme.title}</h3>
+            <p>{theme.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap section split" aria-labelledby="education-h">
+    <div class="rail"><h2 id="education-h">Education</h2></div>
+    <ul class="rows">
+      {
+        site.education.map((e) => (
+          <li>
+            <span class="when">{e.when}</span>
+            <p>
+              {e.what}
+              {e.note && <span class="note"><br />{e.note}</span>}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="wrap section split" id="contact" aria-labelledby="contact-h">
+    <div class="rail"><h2 id="contact-h">Contact</h2></div>
+    <ul class="rows">
+      <li>
+        <span class="label">Email</span>
+        <p>
+          <a href="#contact" data-user={site.email.user} data-domain={site.email.domain} data-show-address
+            >{site.email.user} [at] {site.email.domain}</a
+          >
+        </p>
+      </li>
+      {
+        profiles.map((p) => (
+          <li>
+            <span class="label">{p.label}</span>
+            <p><Ext href={p.href}>{p.text}</Ext></p>
+          </li>
+        ))
+      }
+      <li>
+        <span class="label">CV</span>
+        <p><a href={url('/cv/')}>View or download the PDF</a></p>
+      </li>
+    </ul>
+  </section>
+</Base>

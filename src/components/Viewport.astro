@@ -1,0 +1,63 @@
+---
+import { site } from '../data/site';
+import { url } from '../lib/url';
+---
+
+<figure class="viewport" data-viewport>
+  <div class="viewport-frame">
+    {
+      site.heroVideo ? (
+        <video src={site.heroVideo} poster={site.heroPoster ?? undefined} autoplay muted loop playsinline aria-label={site.heroCaption || undefined} />
+      ) : (
+        <>
+          <canvas
+            role="img"
+            aria-label="Animation of a simulated robot exploring an unknown floor plan. It keeps driving to the nearest unexplored edge, and the yellow target objects light up once it has seen them."
+          />
+          <noscript>
+            <img
+              class="viewport-poster"
+              src={url('/media/hero-poster.png')}
+              width="800"
+              height="500"
+              alt="A finished map from the exploration simulation: rooms and corridors with five yellow target objects."
+            />
+          </noscript>
+        </>
+      )
+    }
+  </div>
+  <figcaption>
+    {
+      site.heroVideo ? (
+        <p>{site.heroCaption}</p>
+      ) : (
+        <>
+          <p>
+            <span class="note-live">
+              Simulation, not a recording. The robot drives to the nearest unexplored edge and maps what it sees; yellow marks target objects it has observed.
+            </span>
+            <span class="note-still">Simulation, shown as a finished map. Yellow marks target objects the robot observed.</span>
+          </p>
+          <button type="button" class="btn-quiet" data-new-map hidden>New map</button>
+          <noscript>
+            <style>
+              .viewport .note-live {
+                display: none;
+              }
+              .viewport .note-still {
+                display: inline;
+              }
+            </style>
+          </noscript>
+        </>
+      )
+    }
+  </figcaption>
+</figure>
+
+<script>
+  import { mountViewport } from '../scripts/viewport';
+
+  document.querySelectorAll<HTMLElement>('[data-viewport]').forEach(mountViewport);
+</script>

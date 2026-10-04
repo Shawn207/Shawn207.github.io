@@ -1,0 +1,35 @@
+---
+import type { Project } from '../data/projects';
+import { url } from '../lib/url';
+import Diagram from './Diagram.astro';
+import LinkChips from './LinkChips.astro';
+import VideoFacade from './VideoFacade.astro';
+
+interface Props {
+  project: Project;
+  feature?: boolean;
+}
+const { project, feature = false } = Astro.props;
+
+// Keep hyphenated words such as "air-ground" on one line.
+const escape = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const titleHtml = project.title
+  .split(' ')
+  .map((word) => (word.includes('-') ? `<span class="nowrap">${escape(word)}</span>` : escape(word)))
+  .join(' ');
+---
+
+<article class:list={['project', { feature }]} id={project.id}>
+  <div class="project-media">
+    {project.youtube && <VideoFacade id={project.youtube} title={project.title} poster={project.poster} />}
+    {!project.youtube && project.diagram && <Diagram kind={project.diagram} />}
+  </div>
+  <div class="project-body">
+    <h3 class="project-title">
+      {project.page ? <a href={url(project.page)} set:html={titleHtml} /> : <Fragment set:html={titleHtml} />}
+    </h3>
+    <p class="project-status">{project.status}</p>
+    <p class="project-blurb">{project.blurb}</p>
+    <LinkChips links={project.links} />
+  </div>
+</article>

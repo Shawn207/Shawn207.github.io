@@ -1,0 +1,40 @@
+---
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+interface Props {
+  current?: 'home' | 'cv' | 'project';
+}
+const { current = 'home' } = Astro.props;
+
+const links = [
+  { href: url('/#projects'), label: 'Projects', key: 'projects' },
+  { href: url('/#publications'), label: 'Publications', key: 'publications' },
+  { href: url('/cv/'), label: 'CV', key: 'cv' },
+];
+---
+
+<header>
+  <div class="wrap nav-inner">
+    <a class="wordmark" href={url('/')} aria-current={current === 'home' ? 'page' : undefined}>{site.name}</a>
+    <nav aria-label="Main">
+      <ul class="nav-links">
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <button type="button" class="theme-toggle" data-theme-toggle hidden aria-label="Switch to dark theme">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.6"></circle>
+        <path d="M10 2.75a7.25 7.25 0 0 1 0 14.5z" fill="currentColor"></path>
+      </svg>
+    </button>
+  </div>
+</header>

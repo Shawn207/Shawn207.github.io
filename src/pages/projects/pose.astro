@@ -1,0 +1,143 @@
+---
+import Base from '../../layouts/Base.astro';
+import Ext from '../../components/Ext.astro';
+import LinkChips from '../../components/LinkChips.astro';
+import VideoFacade from '../../components/VideoFacade.astro';
+import { site } from '../../data/site';
+import { projects } from '../../data/projects';
+
+const project = projects.find((p) => p.id === 'pose')!;
+const title =
+  'Pose-aware Legged Robot Semantic Exploration with Omnidirectional Perception in Confined Unknown Environments';
+
+const abstract =
+  "Semantic exploration in confined environments requires both environment mapping and detailed observation of target objects. For ground robots, limited sensors vertical fields of view and restricted standoff distances can leave upper object surface unobserved from planar viewpoints. Body tilting can improve coverage, but additional observations and posture transitions increase mission time. To balance this trade-off, we present POSE, a pose-aware semantic exploration system that exploits a legged robot's intrinsic body pitch and roll with omnidirectional Camera-LiDAR perception. The proposed pose-aware viewpoint sampling module selects body postures from partial object maps according to expected coverage gain, while aim-aligned execution reduces unnecessary body reorientation. Further, we introduce an object-centric viewpoint pruning strategy assisted by a vision-language model (VLM), which uses persistent observation history and bird's-eye-view (BEV) maps to reduce redundant inspection visits. The resulting semantic viewpoints are combined with geometric exploration viewpoints in a global exploration planner. Simulations show that POSE improves final target-surface coverage by 8–10 percentage points over the planar planning baseline while reducing exploration time by 17–32%, and achieves the highest mean object coverage AUC among the evaluated baselines. Real-world experiments with a legged robot carrying an 360 degrees omnidirectional Camera-LiDAR suite in a machine shop further demonstrate the system's applicability. These results support adaptive body-posture planning for improving the coverage–efficiency trade-off in legged robot semantic exploration. We plan to release the code for community benefit in the future.";
+
+const results = [
+  'Final target-surface coverage is 8–10 percentage points higher than the planar baseline, in three simulated industrial scenes: a warehouse and two factories.',
+  'Exploration takes 17–32% less time than the planar baseline, and POSE has the highest mean object-coverage AUC of the methods compared.',
+  'It executes 53–73% fewer body postures than the two posture-aware baselines, and uses 52–76% fewer VLM tokens than asking the VLM at every viewpoint.',
+  'On a Spot in a university machine shop, one run took 209.7 s and 44.9 m, executed five tilted postures, and detected and reconstructed all five target machines.',
+];
+
+const contributions = [
+  'A pose-aware semantic viewpoint sampling module that extends planar semantic viewpoints with body pitch and roll to improve object-surface coverage and uses aim-aligned posture transitions to reduce reorientation.',
+  'An object-centric VLM-assisted viewpoint pruning strategy that takes BEV maps and accumulated observations through persistent VLM sessions to reduce redundant visits.',
+  'An integrated semantic exploration and mapping framework that jointly optimizes pose-aware semantic inspection and geometric exploration visits with omnidirectional Camera-LiDAR fusion and real-time semantic mapping. The system is validated in industrial simulations and real-world machine-shop experiments.',
+];
+
+const bibtex = `@misc{zhan2026pose,
+  title         = {Pose-aware Legged Robot Semantic Exploration with Omnidirectional Perception in Confined Unknown Environments},
+  author        = {Zhan, Xiaoyang and Chen, Shiyu and Shimada, Kenji},
+  year          = {2026},
+  eprint        = {2609.19460},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO}
+}`;
+
+const links = [
+  { label: 'arXiv', href: 'https://arxiv.org/abs/2609.19460' },
+  { label: 'Video', href: 'https://www.youtube.com/watch?v=1NR4InKZl2I' },
+  { label: 'BibTeX', href: '#bibtex' },
+  { label: 'Code (planned)' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  headline: title,
+  author: [
+    { '@type': 'Person', name: 'Xiaoyang Zhan' },
+    { '@type': 'Person', name: 'Shiyu Chen' },
+    { '@type': 'Person', name: 'Kenji Shimada' },
+  ],
+  datePublished: '2026-09-16',
+  sameAs: 'https://arxiv.org/abs/2609.19460',
+  description: abstract.split('. ').slice(0, 2).join('. ') + '.',
+};
+---
+
+<Base
+  title={`POSE: pose-aware legged robot semantic exploration | ${site.name}`}
+  description="POSE lets a legged robot pitch and roll its body to see the tops of tall objects in confined spaces, and uses a vision-language model to skip redundant inspection visits."
+  path="/projects/pose/"
+  current="project"
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="wrap page-head">
+    <h1 class="page-title">{title}</h1>
+    <p class="authors">
+      <span>Xiaoyang Zhan*</span>, <span>Shiyu Chen*</span>, <span>Kenji Shimada</span>
+    </p>
+    <p class="meta">
+      Department of Mechanical Engineering, Carnegie Mellon University. arXiv preprint, 2026. Submitted to ICRA 2027.
+      * Equal contribution.
+    </p>
+    <LinkChips links={links} />
+  </div>
+
+  <div class="wrap">
+    <div class="page-media">
+      <VideoFacade id={project.youtube!} title="POSE supplementary video" poster={project.poster} />
+    </div>
+  </div>
+
+  <section class="wrap section split" aria-labelledby="abstract-h">
+    <div class="rail"><h2 id="abstract-h">Abstract</h2></div>
+    <div class="prose">
+      <p>{abstract}</p>
+      <p>Abstract reproduced from the <Ext href="https://arxiv.org/abs/2609.19460">arXiv preprint</Ext>.</p>
+    </div>
+  </section>
+
+  <section class="wrap section split" aria-labelledby="results-h">
+    <div class="rail"><h2 id="results-h">Results</h2></div>
+    <div class="prose">
+      <ul>{results.map((r) => <li>{r}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="wrap section split" aria-labelledby="contributions-h">
+    <div class="rail"><h2 id="contributions-h">Contributions</h2></div>
+    <div class="prose">
+      <ul>{contributions.map((c) => <li>{c}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="wrap section split" id="bibtex" aria-labelledby="bibtex-h">
+    <div class="rail"><h2 id="bibtex-h">BibTeX</h2></div>
+    <div class="bibtex">
+      <pre id="bibtex-text" tabindex="0" role="region" aria-label="BibTeX entry"><code>{bibtex}</code></pre>
+      <button type="button" class="btn-quiet" data-copy="bibtex-text">Copy BibTeX</button>
+      <span class="sr-only" role="status" data-copy-status></span>
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    const status = button.parentElement?.querySelector<HTMLElement>('[data-copy-status]');
+    const label = button.textContent;
+    button.addEventListener('click', async () => {
+      const source = document.getElementById(button.dataset.copy ?? '');
+      if (!source) return;
+      try {
+        await navigator.clipboard.writeText(source.textContent ?? '');
+        button.textContent = 'Copied';
+        if (status) status.textContent = 'BibTeX copied to the clipboard.';
+      } catch (e) {
+        button.textContent = 'Press Ctrl+C to copy';
+        const range = document.createRange();
+        range.selectNodeContents(source);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+      setTimeout(() => {
+        button.textContent = label;
+        if (status) status.textContent = '';
+      }, 2200);
+    });
+  });
+</script>

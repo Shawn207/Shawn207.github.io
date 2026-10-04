@@ -1,0 +1,33 @@
+---
+import type { Link } from '../data/projects';
+import { isExternal, url } from '../lib/url';
+
+interface Props {
+  links: Link[];
+}
+const { links } = Astro.props;
+---
+
+{
+  links.length > 0 && (
+    <ul class="chips">
+      {links.map((link) => (
+        <li>
+          {link.href ? (
+            <a
+              class="chip"
+              href={url(link.href)}
+              target={isExternal(link.href) ? '_blank' : undefined}
+              rel={isExternal(link.href) ? 'noopener noreferrer' : undefined}
+            >
+              {link.label}
+              {isExternal(link.href) && <span class="sr-only"> (opens in a new tab)</span>}
+            </a>
+          ) : (
+            <span class="chip chip-off">{link.label}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}

@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+const pdf = url(site.cv);
+---
+
+<Base
+  title={`CV | ${site.name}`}
+  description={`One-page CV of ${site.name}, Ph.D. student at Carnegie Mellon University working on robot decision-making, active perception, and semantic mapping.`}
+  path="/cv/"
+  current="cv"
+>
+  <div class="wrap page-head">
+    <h1 class="page-title">CV</h1>
+    <div class="cv-actions">
+      <a class="btn" href={pdf} download>Download PDF</a>
+      <p>One-page PDF. <a href={pdf}>View it in your browser</a>.</p>
+    </div>
+    <object class="cv-frame" data={`${pdf}#toolbar=0&navpanes=0&view=FitH`} type="application/pdf" aria-label="CV as a PDF">
+      <p>This browser cannot show the PDF here. <a href={pdf}>Open it directly</a>.</p>
+    </object>
+  </div>
+</Base>

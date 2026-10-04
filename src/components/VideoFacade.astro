@@ -1,0 +1,66 @@
+---
+import { url } from '../lib/url';
+
+interface Props {
+  id: string;
+  title: string;
+  poster?: string;
+}
+const { id, title, poster } = Astro.props;
+
+const watch = `https://www.youtube.com/watch?v=${id}`;
+const thumb = poster ? url(poster) : `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+const fallback = poster ? undefined : `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+---
+
+<div class="facade" data-facade data-id={id} data-title={title}>
+  <img
+    src={thumb}
+    data-fallback={fallback}
+    alt=""
+    width="1280"
+    height="720"
+    loading="lazy"
+    decoding="async"
+    referrerpolicy="no-referrer"
+  />
+  <a class="facade-play" href={watch} target="_blank" rel="noopener noreferrer" aria-label={`Play video: ${title}`}>
+    <span class="facade-disc">
+      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3.5v15l12.5-7.5z" fill="currentColor"></path></svg>
+    </span>
+  </a>
+</div>
+
+<script>
+  // The video loads only when someone presses play. Until then this is a thumbnail and a link to YouTube.
+  document.querySelectorAll<HTMLElement>('[data-facade]').forEach((box) => {
+    const img = box.querySelector<HTMLImageElement>('img');
+    if (img) {
+      const fallback = img.dataset.fallback;
+      const swap = () => {
+        if (fallback && img.src !== fallback) img.src = fallback;
+        else img.hidden = true;
+      };
+      // YouTube serves a small grey placeholder when a video has no maxres thumbnail.
+      // An image that already failed before this script ran (for example when YouTube is blocked) also ends up here.
+      const check = () => {
+        if (img.naturalWidth < 400) swap();
+      };
+      img.addEventListener('error', swap);
+      if (img.complete) check();
+      else img.addEventListener('load', check);
+    }
+
+    box.querySelector<HTMLAnchorElement>('.facade-play')?.addEventListener('click', (event) => {
+      event.preventDefault();
+      const frame = document.createElement('iframe');
+      frame.src = `https://www.youtube-nocookie.com/embed/${box.dataset.id}?autoplay=1&rel=0&modestbranding=1`;
+      frame.title = box.dataset.title ?? 'Video';
+      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      box.replaceChildren(frame);
+      frame.focus();
+    });
+  });
+</script>

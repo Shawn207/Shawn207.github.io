@@ -1,0 +1,111 @@
+---
+import '@fontsource-variable/archivo/wdth.css';
+// Same file the stylesheet points to, fetched early so the text does not jump when the font arrives.
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+import { url } from '../lib/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  path?: string;
+  current?: 'home' | 'cv' | 'project';
+  type?: 'website' | 'article';
+  jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
+}
+
+const {
+  title = site.title,
+  description = site.description,
+  path = '/',
+  current = 'home',
+  type = 'website',
+  jsonLd,
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(url(path), site.url).href;
+const image = new URL(url('/og.png'), site.url).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a1016" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A simulated robot mapping an unknown floor plan, next to the name Xiaoyang Zhan" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <!-- Apply a saved theme before first paint to avoid a flash. -->
+    <script is:inline>
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav current={current} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Theme toggle. Without JavaScript the page simply follows the system setting.
+      const root = document.documentElement;
+      const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+      const system = window.matchMedia('(prefers-color-scheme: dark)');
+      const current = () => root.dataset.theme ?? (system.matches ? 'dark' : 'light');
+      const label = () => toggle?.setAttribute('aria-label', current() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+      if (toggle) {
+        toggle.hidden = false;
+        label();
+        toggle.addEventListener('click', () => {
+          const next = current() === 'dark' ? 'light' : 'dark';
+          root.dataset.theme = next;
+          try {
+            localStorage.setItem('theme', next);
+          } catch (e) {}
+          label();
+        });
+        system.addEventListener('change', label);
+      }
+
+      // Email address is assembled here so it is not sitting in the HTML for scrapers.
+      document.querySelectorAll<HTMLAnchorElement>('a[data-user][data-domain]').forEach((a) => {
+        const address = `${a.dataset.user}@${a.dataset.domain}`;
+        a.href = `mailto:${address}`;
+        if (a.hasAttribute('data-show-address')) a.textContent = address;
+      });
+    </script>
+  </body>
+</html>
