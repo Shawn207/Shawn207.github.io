@@ -33,7 +33,7 @@ const profiles = [
     <div class="hero-copy">
       <h1 class="hero-title" id="hero-title">
         {site.name}
-        <span class="hero-role">{site.role}, {site.affiliation}</span>
+        <span class="hero-role">{site.role}, <span class="hero-aff">{site.affiliation}</span><span class="hero-focus">{site.focus}</span></span>
       </h1>
       <div class="hero-rest">
         {site.background.map((p) => <p class="hero-lede" set:html={rich(p)} />)}
@@ -61,33 +61,23 @@ const profiles = [
     </figure>
   </section>
 
-  <section class="wrap section split" id="research" aria-labelledby="research-h">
-    <div class="rail"><h2 id="research-h">Research interest</h2></div>
-    <div>
-      <p class="lede" set:html={rich(site.researchInterest)} />
-      <div class="themes">
-        {
-          site.themes.map((theme) => (
-            <div class="theme">
-              <h3>{theme.title}</h3>
-              <p>{theme.text}</p>
-            </div>
-          ))
-        }
-      </div>
+  <section class="wrap glance" id="research" aria-label="Research interest and strengths">
+    <div class="glance-col">
+      <h2 class="glance-h">Research interest</h2>
+      <p class="glance-text" set:html={rich(site.researchInterest)} />
+      <ul class="glance-topics">
+        {site.topics.map((t) => <li>{t}</li>)}
+      </ul>
     </div>
-  </section>
-
-  <section class="wrap section split" id="strengths" aria-labelledby="strengths-h">
-    <div class="rail"><h2 id="strengths-h">Strengths</h2></div>
-    <div>
-      <p class="lede" set:html={rich(site.strengths.lede)} />
-      <ul class="rows rows-wide">
+    <div class="glance-col" id="strengths">
+      <h2 class="glance-h">Strengths</h2>
+      <p class="glance-text" set:html={rich(site.strengths.lede)} />
+      <ul class="glance-rows">
         {
           site.strengths.layers.map((layer) => (
             <li>
               <span class="label">{layer.label}</span>
-              <p set:html={rich(layer.text)} />
+              <span set:html={rich(layer.text)} />
             </li>
           ))
         }

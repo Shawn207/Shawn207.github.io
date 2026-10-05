@@ -8,8 +8,9 @@ export const site = {
     'Ph.D. student at Carnegie Mellon University (CERLAB) working on decision-making, active perception, and semantic mapping for single robots and multi-robot teams, with hands-on experience across the robot autonomy stack.',
   url: 'https://shawn207.github.io',
 
-  role: 'Ph.D. student, Mechanical Engineering (Robotics)',
+  role: 'Ph.D. student in Mechanical Engineering',
   affiliation: 'Carnegie Mellon University',
+  focus: 'Robotics research (CERLAB)',
 
   portrait: {
     src: '/media/portrait.jpg',
@@ -36,41 +37,32 @@ export const site = {
   cv: '/Xiaoyang_Zhan_CV.pdf',
 
   researchInterest:
-    'My research is about how robots decide where to look and where to go: decision-making and planning for single robots and multi-robot teams, active perception, and semantic mapping, validated on a Boston Dynamics Spot and custom UAVs. Lately I have been connecting these with vision-language models for embodied AI.',
+    'How robots decide where to look and where to go: decision-making and planning for single robots and multi-robot teams, active perception, and semantic mapping, validated on a Boston Dynamics Spot and custom UAVs. Lately I am connecting these with vision-language models for embodied AI.',
 
-  themes: [
-    {
-      title: 'Decision-making for robots and robot teams',
-      text: 'How a robot picks its next viewpoint or goal, and how a team divides the work when its members sense and move differently.',
-    },
-    {
-      title: 'Active perception and semantic mapping',
-      text: 'Planning where to look so a robot gathers the observations a task needs, and turning those observations into maps it can plan on.',
-    },
-    {
-      title: 'Vision-language models in the loop',
-      text: 'Using VLM judgments, grounded in spatial memory, to make planning decisions that a robot can execute.',
-    },
+  topics: [
+    'Decision-making for robots and robot teams',
+    'Active perception and semantic mapping',
+    'Vision-language models in the loop',
   ],
 
   strengths: {
-    lede: 'My strength is the whole robot-autonomy stack, and the field experience to make it work on real machines. I build the pieces and connect them: sensing and calibration, mapping, planning, and the execution layer that keeps a robot safe when the plan meets reality. These systems have run on a legged robot and on custom quadrotors, in machine shops, lobbies, construction-site mock-ups, and indoor flight arenas. I also mentor a research team of up to eight.',
+    lede: 'The whole robot-autonomy stack, plus the field experience to make it work on real machines: a legged robot and custom quadrotors, in machine shops, lobbies, construction-site mock-ups, and flight arenas. I also mentor a research team of up to eight.',
     layers: [
       {
         label: 'Sensing and calibration',
-        text: 'LiDAR-camera fusion and calibration, panoramic and RGB-D perception, real-time dynamic-object detection and tracking.',
+        text: 'LiDAR-camera fusion and calibration, panoramic and RGB-D perception, dynamic-object tracking.',
       },
       {
         label: 'Mapping and estimation',
-        text: 'FAST-LIO2 odometry, occupancy mapping, dense semantic object mapping, Kalman-filter tracking, Segment Anything, PyTorch and OpenCV.',
+        text: 'FAST-LIO2 and VINS, occupancy and dense semantic object mapping, Segment Anything, PyTorch, OpenCV.',
       },
       {
         label: 'Planning and decision-making',
-        text: 'Viewpoint sampling, hierarchical exploration planning, TSP solvers (LKH), A*/Dijkstra, probabilistic roadmaps, safe execution and recovery state machines, and VLM-assisted decisions.',
+        text: 'Viewpoint sampling, hierarchical exploration, TSP (LKH), A*, roadmaps, recovery state machines, VLM-assisted decisions.',
       },
       {
         label: 'Systems and deployment',
-        text: 'ROS, including multi-robot networking, MAVROS and PX4, Spot SDK, Jetson and NUC onboard computers, Docker, Linux, with Isaac Sim, Isaac Lab, Gazebo, and Habitat for simulation.',
+        text: 'ROS and multi-robot networking, PX4, Spot SDK, Jetson and NUC, Docker, Isaac Sim, Gazebo, Habitat.',
       },
     ],
   },
@@ -78,8 +70,8 @@ export const site = {
   education: [
     {
       when: 'In progress',
-      what: 'Ph.D., Mechanical Engineering (Robotics), Carnegie Mellon University',
-      note: 'CERLAB, advised by Prof. Kenji Shimada',
+      what: 'Ph.D., Mechanical Engineering, Carnegie Mellon University',
+      note: 'Robotics research in CERLAB, advised by Prof. Kenji Shimada',
     },
     { when: '2023', what: 'M.S., Mechanical Engineering, Carnegie Mellon University' },
     {
