@@ -1,7 +1,8 @@
 // Content of the project pages (/projects/<id>/), organised the way the papers are.
 // Edit text here; the layout lives in src/pages/projects/[slug].astro.
 //
-// Section kinds: text, list, figure, table, videos, paper, bibtex.
+// Section kinds: text, list, figure, table, videos, paper, bibtex. Every section can also have `figures: [...]`.
+// `hero` is the row of clips right under the title and `teaser` is the picture below it.
 // A figure with an empty `src` is not shown. To add a picture, copy it to public/media/<project>/ and set
 // src (plus width, height, alt, caption). The empty figure slots below mark where pictures are still missing.
 // Text can contain links written as [label](https://example.com).
@@ -48,14 +49,19 @@ export type Paper = {
   figures?: Figure[];
 };
 
-export type Section =
+/** Any section can carry pictures that are shown after its text. */
+type WithFigures = { figures?: Figure[] };
+
+export type Section = (
   | { kind: 'text'; heading: string; paragraphs: string[]; note?: string }
   | { kind: 'list'; heading: string; items: string[] }
   | ({ kind: 'figure' } & Figure)
   | { kind: 'table'; heading: string; table: Table }
   | { kind: 'videos'; heading: string; clips: Clip[] }
   | ({ kind: 'paper' } & Paper)
-  | { kind: 'bibtex'; entries: { id: string; label?: string; text: string }[] };
+  | { kind: 'bibtex'; entries: { id: string; label?: string; text: string }[] }
+) &
+  WithFigures;
 
 export type ProjectPage = {
   id: string;
@@ -65,7 +71,10 @@ export type ProjectPage = {
   authors?: Author[];
   meta?: string[];
   links: Link[];
-  hero: Clip;
+  /** The clips shown first, right under the title (one to three). Put the best ones here. */
+  hero: Clip[];
+  /** A picture shown right after the hero clips, usually the paper's Figure 1. */
+  teaser?: Figure;
   /** For structured data on single-paper pages. */
   article?: { datePublished: string; sameAs: string };
   sections: Section[];
@@ -98,7 +107,25 @@ const pose: ProjectPage = {
     { label: 'BibTeX', href: '#bibtex' },
     { label: 'Code (planned)' },
   ],
-  hero: { kind: 'youtube', id: '1NR4InKZl2I', title: 'POSE supplementary video' },
+  hero: [
+    {
+      kind: 'video',
+      src: '/media/pose/pose-demo.mp4',
+      poster: '/media/pose/pose-demo-poster.jpg',
+      title: 'POSE real-world run in a machine shop',
+      caption:
+        'Real-world run: a Spot explores an unknown machine shop, detects machines online, and executes 5-DoF sensing postures. Shown at 0.6× to 2.5× speed.',
+      loop: true,
+    },
+  ],
+  teaser: {
+    src: '/media/pose/fig-front.jpg',
+    width: 1600,
+    height: 1805,
+    alt: 'Composite figure of a machine-shop run. (a) A Spot pitched down by 30 degrees looking up at a vertical band saw, with the LiDAR pose drawn as a yellow pyramid. (b) The same viewpoint in the map. (c) A fisheye camera view. (d) A top-down map with colored object boxes, viewpoints, LiDAR poses, and the robot path. (e) A panorama with the five detected machines labeled.',
+    caption:
+      'POSE in a machine shop. (a, b) The robot pitches its body (here −30°) so the LiDAR and cameras can see the top of a tall machine. (c) A fisheye camera view from that posture. (d) The map built during the run, with the object viewpoints, LiDAR poses, and path history. (e) The panorama with the five detected machines: two turret mills, a lathe, a horizontal band saw, and a vertical band saw.',
+  },
   article: { datePublished: '2026-09-16', sameAs: 'https://arxiv.org/abs/2609.19460' },
   sections: [
     {
@@ -107,8 +134,21 @@ const pose: ProjectPage = {
       paragraphs: [poseAbstract],
       note: 'Abstract reproduced from the [arXiv preprint](https://arxiv.org/abs/2609.19460).',
     },
-    // Add the system-overview figure from the paper here:
-    { kind: 'figure', heading: 'Overview', src: '', alt: '', caption: '' },
+    {
+      kind: 'videos',
+      heading: 'Video',
+      clips: [{ kind: 'youtube', id: '1NR4InKZl2I', title: 'POSE supplementary video' }],
+    },
+    {
+      kind: 'figure',
+      heading: 'Method overview',
+      src: '/media/pose/fig-method.jpg',
+      width: 2200,
+      height: 1230,
+      alt: 'System diagram. The robot and its sensors feed fusion and mapping, which produces an RGB image, an occupancy map, and a point cloud. Pose-aware viewpoint sampling creates candidate viewpoints around each object. An object-centric VLM session takes re-projected images and a table of candidates with bird’s-eye-view maps, and prunes them to a set of semantic viewpoints. These join geometric frontier viewpoints in a global TSP planner, which outputs a five-degree-of-freedom waypoint (x, y, yaw, pitch, roll). Aim-aligned posture execution sends it to the locomotion controller.',
+      caption:
+        'System overview. Fusion and mapping turn the camera and LiDAR data into an occupancy map and object point clouds. Pose-aware viewpoint sampling proposes viewpoints with body pitch and roll around each object, and an object-centric VLM session prunes them using re-projected images and bird’s-eye-view maps. The pruned semantic viewpoints and the geometric frontier viewpoints go to a global TSP planner. Its waypoint (x, y, yaw, pitch, roll) is executed with aim-aligned posture transitions.',
+    },
     {
       kind: 'list',
       heading: 'Results',
@@ -118,9 +158,17 @@ const pose: ProjectPage = {
         'It executes 53–73% fewer body postures than the two posture-aware baselines, and uses 52–76% fewer VLM tokens than asking the VLM at every viewpoint.',
         'On a Spot in a university machine shop, one run took 209.7 s and 44.9 m, executed five tilted postures, and detected and reconstructed all five target machines.',
       ],
+      figures: [
+        {
+          src: '/media/pose/fig-coverage.png',
+          width: 2000,
+          height: 1211,
+          alt: 'Six line charts in three rows (warehouse, factory A, factory B) and two columns (object surface coverage and scene coverage against time). In every row the green POSE curve rises fastest, ahead of the SEDEM, SEDEM-5DoF, and VLM-at-Arrival curves.',
+          caption:
+            'Coverage over time in the three simulated scenes (curves with shaded spread). Left: object-surface coverage. Right: scene coverage. POSE has the highest area under the curve (AUC) for both measures in every scene, for example 0.70 against 0.55 for the planar SEDEM baseline in the warehouse. SEDEM-5DoF and VLM-at-Arrival are the two posture-aware baselines.',
+        },
+      ],
     },
-    // Add a result figure (simulation trajectories or the machine-shop run) here:
-    { kind: 'figure', heading: 'Qualitative results', src: '', alt: '', caption: '' },
     {
       kind: 'list',
       heading: 'Contributions',
@@ -184,7 +232,32 @@ const sedem: ProjectPage = {
     { label: 'Slides (PDF)', href: '/docs/SEDEM_IROS2026_slides.pdf' },
     { label: 'BibTeX', href: '#bibtex' },
   ],
-  hero: { kind: 'youtube', id: '9tsnBLaSSmU', title: 'SEDEM supplementary video' },
+  hero: [
+    {
+      kind: 'video',
+      src: '/media/sedem/drone-cage-demo.mp4',
+      poster: '/media/sedem/drone-cage-poster.jpg',
+      title: 'Exploration demo in the drone cage',
+      caption:
+        'Exploration demo in our drone cage. The target is a chair; the robot passes through several narrow spaces and a corridor while the dense map grows.',
+    },
+    {
+      kind: 'video',
+      src: '/media/sedem/mock-construction-site.mp4',
+      poster: '/media/sedem/mock-construction-site-poster.jpg',
+      title: 'Mock construction site',
+      caption: 'Mock construction site: five targets, 54 s of exploration. Shown at 3× speed.',
+      loop: true,
+    },
+    {
+      kind: 'video',
+      src: '/media/sedem/lobby.mp4',
+      poster: '/media/sedem/lobby-poster.jpg',
+      title: 'Dense object mapping in a lobby',
+      caption: 'Lobby: 11 chairs mapped with a 1.75 cm mean object-map error. Shown at 3× speed.',
+      loop: true,
+    },
+  ],
   article: { datePublished: '2025-09-17', sameAs: 'https://arxiv.org/abs/2505.22880' },
   sections: [
     {
@@ -192,6 +265,11 @@ const sedem: ProjectPage = {
       heading: 'Abstract',
       paragraphs: [sedemAbstract],
       note: 'Abstract reproduced from the [arXiv version](https://arxiv.org/abs/2505.22880) of the paper.',
+    },
+    {
+      kind: 'videos',
+      heading: 'Full video',
+      clips: [{ kind: 'youtube', id: '9tsnBLaSSmU', title: 'SEDEM supplementary video' }],
     },
     {
       kind: 'figure',
@@ -231,6 +309,16 @@ const sedem: ProjectPage = {
         highlight: 5,
         foot: 'Ours also completed 100% of the expected semantic viewpoints in every scene, against 66.0–82.5% for TARE.',
       },
+      figures: [
+        {
+          src: '/media/sedem/fig-benchmark.jpg',
+          width: 2400,
+          height: 905,
+          alt: 'A grid of exploration paths. Rows are the office, warehouse, and factory scenes, each shown as a rendering on the left. Columns are the paths of SE in white, HIRE in yellow, TARE in blue, and the proposed planner in green, drawn over the same top-down map. The white and yellow paths cross themselves many times, the blue path is cleaner, and the green path is the most compact.',
+          caption:
+            'Exploration paths in the three simulated scenes. From left to right: SE (white), HIRE (yellow), TARE (blue), and ours (green), drawn over the same map. Ours covers each scene with the shortest and least repetitive path.',
+        },
+      ],
     },
     {
       kind: 'table',
@@ -245,34 +333,22 @@ const sedem: ProjectPage = {
         ],
         foot: 'In the construction site, completeness counts points within 2.5 cm of the ground truth.',
       },
-    },
-    {
-      kind: 'videos',
-      heading: 'More videos',
-      clips: [
+      figures: [
         {
-          kind: 'video',
-          src: '/media/sedem/drone-cage-demo.mp4',
-          poster: '/media/sedem/drone-cage-poster.jpg',
-          title: 'Exploration demo in the drone cage',
+          src: '/media/sedem/fig-construction.jpg',
+          width: 1800,
+          height: 1651,
+          alt: 'Composite figure of the mock construction site experiment. (a) An overhead photo of the site with the five targets boxed. (b) The map with the robot path in green and the targets boxed and labeled: three window frames, a working platform, and cones. (c to f) Dense point clouds of a window frame, the platform, a cone, and a second window frame. (g to j) The same objects as colored point clouds.',
           caption:
-            'Exploration demo in our drone cage. The target is a chair; the robot passes through several narrow spaces and a corridor while the dense map grows.',
+            'Mock construction site. (a) The site with the five targets boxed. (b) The background map, detected objects, and the exploration path. (c–j) Dense maps of the window frames, the work platform, and the cone.',
         },
         {
-          kind: 'video',
-          src: '/media/sedem/mock-construction-site.mp4',
-          poster: '/media/sedem/mock-construction-site-poster.jpg',
-          title: 'Mock construction site',
-          caption: 'Mock construction site: five targets, 54 s of exploration. Shown at 3× speed.',
-          loop: true,
-        },
-        {
-          kind: 'video',
-          src: '/media/sedem/lobby.mp4',
-          poster: '/media/sedem/lobby-poster.jpg',
-          title: 'Dense object mapping in a lobby',
-          caption: 'Lobby: 11 chairs mapped with a 1.75 cm mean object-map error. Shown at 3× speed.',
-          loop: true,
+          src: '/media/sedem/fig-lobby.jpg',
+          width: 2000,
+          height: 822,
+          alt: 'Lobby experiment. (a, b) Photos of two chairs of different types. (c, d) Their dense point clouds. (e) A top-down point-cloud map of the whole lobby with the chairs visible as small clusters.',
+          caption:
+            'Lobby. (a, b) Two of the chair types. (c, d) Their dense object maps. (e) The top-down map of the lobby with all mapped chairs.',
         },
       ],
     },
@@ -327,7 +403,20 @@ const dodt: ProjectPage = {
     { label: 'Mapping code', href: 'https://github.com/Shawn207/map_manager_pub' },
     { label: 'BibTeX', href: '#bibtex' },
   ],
-  hero: { kind: 'youtube', id: '9dKX3BRnxyw', title: 'Onboard dynamic-object detection and tracking video (RA-L 2024)' },
+  hero: [
+    {
+      kind: 'youtube',
+      id: '9dKX3BRnxyw',
+      title: 'Onboard dynamic-object detection and tracking video (RA-L 2024)',
+      caption: 'RA-L 2024: onboard detection and tracking.',
+    },
+    {
+      kind: 'youtube',
+      id: 'u5zblVx8KRc',
+      title: 'Dynamic obstacle tracking and mapping system video (ICRA 2023)',
+      caption: 'ICRA 2023: tracking and mapping system, simulation and flight experiments.',
+    },
+  ],
   sections: [
     {
       kind: 'text',
@@ -434,18 +523,6 @@ const dodt: ProjectPage = {
       ],
     },
     {
-      kind: 'videos',
-      heading: 'More videos',
-      clips: [
-        {
-          kind: 'youtube',
-          id: 'u5zblVx8KRc',
-          title: 'Dynamic obstacle tracking and mapping system video (ICRA 2023)',
-          caption: 'ICRA 2023: tracking and mapping system, simulation and flight experiments.',
-        },
-      ],
-    },
-    {
       kind: 'text',
       heading: 'Platform',
       paragraphs: [
@@ -497,14 +574,16 @@ const airGround: ProjectPage = {
   title: 'Heterogeneous air-ground exploration',
   meta: [`${CMU} Manuscript in preparation.`],
   links: [],
-  hero: {
-    kind: 'video',
-    src: '/media/air-ground/exploration.mp4',
-    poster: '/media/air-ground/poster.jpg',
-    title: 'Visualization of a heterogeneous air-ground exploration run',
-    caption: 'Visualization of an exploration run.',
-    loop: true,
-  },
+  hero: [
+    {
+      kind: 'video',
+      src: '/media/air-ground/exploration.mp4',
+      poster: '/media/air-ground/poster.jpg',
+      title: 'Visualization of a heterogeneous air-ground exploration run',
+      caption: 'Visualization of an exploration run.',
+      loop: true,
+    },
+  ],
   sections: [
     {
       kind: 'text',

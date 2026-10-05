@@ -30,7 +30,11 @@ export const projects: Project[] = [
     blurb:
       'Tall objects in confined spaces are hard to see completely from the ground plane. POSE lets a legged robot pitch and roll its body to see more of each object, and uses a vision-language model to skip redundant inspection visits. In simulation it raised final target-surface coverage by 8–10 percentage points and cut exploration time by 17–32% against a planar baseline. It also ran on a Spot in a machine shop.',
     youtube: '1NR4InKZl2I',
-    // tile: { video: '/media/pose/preview.mp4', poster: '/media/pose/preview.jpg', alt: '...' },
+    tile: {
+      video: '/media/pose/pose-demo.mp4',
+      poster: '/media/pose/pose-demo-poster.jpg',
+      alt: 'Real-world machine-shop run of POSE: a top-down map with detected machines and the robot path, a third-person view of the Spot tilting its body toward a machine, and the first-person panoramic view.',
+    },
     page: '/projects/pose/',
     links: [{ label: 'arXiv', href: 'https://arxiv.org/abs/2609.19460' }],
   },
@@ -42,9 +46,9 @@ export const projects: Project[] = [
       'A Spot with a panoramic LiDAR-camera rig explores unknown spaces by itself, finds target objects, and views each one from several angles to build a dense semantic map. One planner schedules geometric coverage and multi-view observations together.',
     youtube: '9tsnBLaSSmU',
     tile: {
-      video: '/media/sedem/drone-cage-loop.mp4',
-      poster: '/media/sedem/drone-cage-poster.jpg',
-      alt: 'Screen recording of an autonomous exploration run in a drone cage: a dense map grows as the robot passes through narrow spaces and a corridor to find a chair.',
+      video: '/media/sedem/construction-loop.mp4',
+      poster: '/media/sedem/construction-loop-poster.jpg',
+      alt: 'Mock construction site run: a top view and a front view of the Spot on the left, and the map on the right growing as the robot explores and boxes the window frames, work platform, and cones.',
     },
     page: '/projects/sedem/',
     links: [

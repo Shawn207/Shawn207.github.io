@@ -10,7 +10,6 @@ export const site = {
 
   role: 'Ph.D. student, Mechanical Engineering (Robotics)',
   affiliation: 'Carnegie Mellon University',
-  headline: 'Robots that decide where to look and where to go.',
 
   portrait: {
     src: '/media/portrait.jpg',
@@ -20,7 +19,7 @@ export const site = {
     alt: 'Portrait of Xiaoyang Zhan, smiling, wearing glasses and a tan jacket over a white hoodie.',
   },
 
-  // First paragraph under the headline: who I am and where I come from.
+  // Paragraphs under the name: who I am and where I come from.
   background: [
     'I am pursuing my Ph.D. degree in [Mechanical Engineering](https://www.meche.engineering.cmu.edu/) at [Carnegie Mellon University](https://www.cmu.edu/), in the Computational Engineering & Robotics Lab (CERLAB) under the supervision of Professor [Kenji Shimada](https://www.meche.engineering.cmu.edu/directory/bios/shimada-kenji.html).',
     'Before my Ph.D., I received my M.S. in Mechanical Engineering from Carnegie Mellon University in 2023. Prior to that, I earned my B.E. in Mechanical Engineering with a minor in Computer Science from the [University of Pittsburgh](https://www.pitt.edu/) in 2021, through its dual-degree program with [Sichuan University](https://en.scu.edu.cn/).',

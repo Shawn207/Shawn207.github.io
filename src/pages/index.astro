@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Ext from '../components/Ext.astro';
 import LinkChips from '../components/LinkChips.astro';
 import ProjectTile from '../components/ProjectTile.astro';
-import { platforms, sensorKit, fusionResult } from '../data/hardware';
+import { hardwareIntro, hardwareLinks, platforms, sensorKit, visuals } from '../data/hardware';
 import { news } from '../data/news';
 import { projects } from '../data/projects';
 import { publications } from '../data/publications';
@@ -31,7 +31,10 @@ const profiles = [
 <Base jsonLd={jsonLd}>
   <section class="wrap hero" aria-labelledby="hero-title">
     <div class="hero-copy">
-      <h1 class="hero-title" id="hero-title">{site.headline}</h1>
+      <h1 class="hero-title" id="hero-title">
+        {site.name}
+        <span class="hero-role">{site.role}, {site.affiliation}</span>
+      </h1>
       <div class="hero-rest">
         {site.background.map((p) => <p class="hero-lede" set:html={rich(p)} />)}
         {site.seeking && <p class="hero-seeking">{site.seeking}</p>}
@@ -124,7 +127,7 @@ const profiles = [
   <section class="wrap section split" id="hardware" aria-labelledby="hardware-h">
     <div class="rail"><h2 id="hardware-h">Hardware</h2></div>
     <div class="hardware">
-      <p class="lede">Robots and sensors I have built systems on and taken into the field.</p>
+      <p class="lede">{hardwareIntro}</p>
       <div class="platforms">
         {
           platforms.map((p) => (
@@ -170,29 +173,18 @@ const profiles = [
         }
       </ul>
 
-      <h3 class="subhead">Sensor fusion results</h3>
-      <figure class="figure">
-        <img
-          src={url(fusionResult.figure.src)}
-          width={fusionResult.figure.width}
-          height={fusionResult.figure.height}
-          alt={fusionResult.figure.alt}
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption>{fusionResult.caption}</figcaption>
-      </figure>
-      <ul class="stats">
+      <h3 class="subhead">In pictures</h3>
+      <div class="visuals">
         {
-          fusionResult.stats.map((st) => (
-            <li>
-              <span class="stat-value">{st.value}</span>
-              <span class="stat-label">{st.label}</span>
-            </li>
+          visuals.map((v) => (
+            <figure class:list={['figure', { 'visual-wide': v.wide }]}>
+              <img src={url(v.src)} width={v.width} height={v.height} alt={v.alt} loading="lazy" decoding="async" />
+              <figcaption>{v.caption}</figcaption>
+            </figure>
           ))
         }
-      </ul>
-      <p class="hardware-more"><a href={url(fusionResult.link.href)}>{fusionResult.link.label}</a></p>
+      </div>
+      <div class="hardware-more"><span>Used in</span><LinkChips links={hardwareLinks} /></div>
     </div>
   </section>
 

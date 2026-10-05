@@ -58,15 +58,16 @@ const single = page.authors && page.authors.length > 0;
     <LinkChips links={page.links} />
   </div>
 
-  <div class="wrap">
-    <div class="page-media">
-      <ClipView clip={page.hero} />
+  <div class="wrap page-media">
+    <div class:list={['hero-clips', `n${page.hero.length}`]}>
+      {page.hero.map((clip) => <ClipView clip={clip} />)}
     </div>
+    {page.teaser?.src && <div class="teaser"><FigureView figure={page.teaser} /></div>}
   </div>
 
   {
     page.sections.map((section) => {
-      if (section.kind === 'figure' && !section.src) {
+      if (section.kind === 'figure' && !section.src && !section.figures?.some((f) => f.src)) {
         // An empty slot: nothing is shown on the site. Fill `src` in src/data/projectPages.ts to show it.
         return null;
       }
@@ -105,6 +106,7 @@ const single = page.authors && page.authors.length > 0;
                 {section.figures?.map((f) => (f.src ? <FigureView figure={f} /> : null))}
               </div>
             )}
+            {section.kind !== 'paper' && section.figures?.map((f) => <FigureView figure={f} />)}
             {section.kind === 'bibtex' && (
               <div class="bibs">
                 {section.entries.map((entry) => (

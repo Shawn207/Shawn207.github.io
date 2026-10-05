@@ -43,9 +43,13 @@ ffmpeg -i public/media/pose/preview.mp4 -frames:v 1 public/media/pose/preview.jp
 
 Then, in `projects.ts`, remove the `//` in front of the `tile:` line of that project and fix the file names and the description (`alt`). An actual `.gif` also works: `tile: { gif: '/media/x/preview.gif', alt: '…' }`. Without `tile`, the tile shows the YouTube thumbnail.
 
+### What goes at the top of a project page
+
+In `projectPages.ts`, `hero` is the row of one to three clips right under the title (a local `.mp4`, or a YouTube video), and `teaser` is the picture below them, usually the paper's Figure 1. Put the clips you want people to see first in `hero`. Longer videos can go in a `videos` section further down.
+
 ### Fill in the empty figure slots on a project page
 
-In `projectPages.ts`, entries like `{ kind: 'figure', heading: 'Overview', src: '', alt: '', caption: '' }` are empty slots. They are not shown on the site. To fill one, copy the picture to `public/media/<project>/`, then set `src`, `width`, `height` (in pixels), `alt` (what the picture shows, for screen readers) and `caption`. The DODT papers have a `figures: []` list for the same purpose.
+In `projectPages.ts`, entries like `{ kind: 'figure', heading: 'Overview', src: '', alt: '', caption: '' }` are empty slots. They are not shown on the site. Any section can also have a `figures: [...]` list, shown after its text and tables. To fill a slot, copy the picture to `public/media/<project>/`, then set `src`, `width`, `height` (in pixels), `alt` (what the picture shows, for screen readers) and `caption`. The DODT papers have a `figures: []` list for the same purpose.
 
 ### Keep YouTube out of the page until someone presses play
 
