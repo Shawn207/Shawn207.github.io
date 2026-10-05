@@ -1,0 +1,36 @@
+---
+import type { Table } from '../data/projectPages';
+import { rich } from '../lib/rich';
+
+interface Props {
+  table: Table;
+}
+const { table } = Astro.props;
+---
+
+<div class="table-block">
+  <p class="table-caption" set:html={rich(table.caption)} />
+  <div class="table-wrap" role="region" aria-label="Scrollable table" tabindex="0">
+    <table>
+      <thead>
+        <tr>{table.head.map((h, i) => <th scope="col" class:list={{ hl: i === table.highlight }}>{h}</th>)}</tr>
+      </thead>
+      <tbody>
+        {
+          table.rows.map((row) => (
+            <tr>
+              {row.map((cell, i) =>
+                i === 0 ? (
+                  <th scope="row">{cell}</th>
+                ) : (
+                  <td class:list={{ hl: i === table.highlight, nw: cell.length <= 14 }}>{cell}</td>
+                ),
+              )}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  {table.foot && <p class="table-foot" set:html={rich(table.foot)} />}
+</div>

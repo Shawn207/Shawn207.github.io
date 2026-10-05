@@ -1,0 +1,36 @@
+---
+import type { Clip } from '../data/projectPages';
+import { rich } from '../lib/rich';
+import { url } from '../lib/url';
+import LoopVideo from './LoopVideo.astro';
+import VideoFacade from './VideoFacade.astro';
+
+interface Props {
+  clip: Clip;
+}
+const { clip } = Astro.props;
+---
+
+<figure class="clip">
+  {
+    clip.kind === 'youtube' ? (
+      <VideoFacade id={clip.id} title={clip.title} />
+    ) : clip.loop ? (
+      <div class="clip-frame">
+        <LoopVideo src={clip.src} poster={clip.poster} label={clip.title} />
+      </div>
+    ) : (
+      <div class="clip-frame">
+        <video
+          src={url(clip.src)}
+          poster={clip.poster ? url(clip.poster) : undefined}
+          controls={clip.controls !== false}
+          playsinline
+          preload="none"
+          aria-label={clip.title}
+        />
+      </div>
+    )
+  }
+  {clip.caption && <figcaption set:html={rich(clip.caption)} />}
+</figure>

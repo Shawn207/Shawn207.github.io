@@ -1,8 +1,8 @@
 ---
 import type { Project } from '../data/projects';
 import { url } from '../lib/url';
-import Diagram from './Diagram.astro';
 import LinkChips from './LinkChips.astro';
+import LoopVideo from './LoopVideo.astro';
 import VideoFacade from './VideoFacade.astro';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
   feature?: boolean;
 }
 const { project, feature = false } = Astro.props;
+const tile = project.tile;
 
 // Keep hyphenated words such as "air-ground" on one line.
 const escape = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -21,12 +22,23 @@ const titleHtml = project.title
 
 <article class:list={['project', { feature }]} id={project.id}>
   <div class="project-media">
-    {project.youtube && <VideoFacade id={project.youtube} title={project.title} poster={project.poster} />}
-    {!project.youtube && project.diagram && <Diagram kind={project.diagram} />}
+    {
+      tile?.video ? (
+        <div class="tile">
+          <LoopVideo src={tile.video} poster={tile.poster} label={tile.alt} />
+        </div>
+      ) : tile?.gif ? (
+        <div class="tile">
+          <img src={url(tile.gif)} alt={tile.alt} loading="lazy" decoding="async" />
+        </div>
+      ) : project.youtube ? (
+        <VideoFacade id={project.youtube} title={project.title} decorative />
+      ) : null
+    }
   </div>
   <div class="project-body">
     <h3 class="project-title">
-      {project.page ? <a href={url(project.page)} set:html={titleHtml} /> : <Fragment set:html={titleHtml} />}
+      <a href={url(project.page)} set:html={titleHtml} />
     </h3>
     <p class="project-status">{project.status}</p>
     <p class="project-blurb">{project.blurb}</p>

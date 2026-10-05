@@ -1,6 +1,6 @@
 # Xiaoyang Zhan: personal website
 
-A small static site built with [Astro](https://astro.build). It has a home page, a project page for POSE, and a CV page. There is no database, no CMS and no tracking.
+A small static site built with [Astro](https://astro.build). It has a home page, a page for each project highlight (POSE, SEDEM, dynamic obstacle perception, air-ground exploration), and a CV page. There is no database, no CMS and no tracking.
 
 ## Run it on your computer
 
@@ -18,25 +18,38 @@ Almost everything you will change lives in `src/data/`:
 
 | File | What it controls |
 | --- | --- |
-| `site.ts` | Name, headline, bio, the "looking for internships" line, links, research themes, education |
-| `projects.ts` | The project tiles on the home page (video, status, text, link buttons) |
+| `site.ts` | Name, headline, the intro paragraphs (links are written as `[label](https://…)`), the photo, the "looking for internships" line, research interest, strengths, education |
+| `projects.ts` | The tiles under "Project Highlights" on the home page (short loop, status, text, link buttons) |
+| `projectPages.ts` | The page behind each tile (`/projects/<id>/`): abstract, figures, tables, videos, BibTeX |
+| `hardware.ts` | The "Hardware" section: robots, sensors, and the sensor-fusion result |
 | `publications.ts` | The publication list (authors, venue, link buttons) |
-| `news.ts` | The "Recent" list |
+| `news.ts` | The "Recent" list. Keep it to the current year |
 
 Other files:
 
 - `public/Xiaoyang_Zhan_CV.pdf` is the file behind the CV page. Replace it with the same file name. This copy has no phone number.
-- `src/pages/projects/pose.astro` is the POSE project page. Copy it to add another project page, then set `page:` on that project in `projects.ts`.
+- `public/docs/SEDEM_IROS2026_slides.pdf` is the SEDEM slide deck linked from "Recent" and the SEDEM page.
 - To remove the "Looking for internships" line, set `seeking` to `''` in `site.ts`.
 - To add a link button, add `{ label: 'Code', href: 'https://…' }` to a `links` list. A button without `href` is shown as a dashed, inactive tag, which is how "Code (planned)" appears.
 
-### Replace the hero animation with a real clip
+### Add a GIF-style preview to a project tile
 
-The animation on the home page is a generated simulation, labelled as one. To use a real recording instead, put a short, silent, looping MP4 (about 5 MB or less) in `public/media/`, then set `heroVideo` and `heroCaption` in `site.ts`.
+The tile on the home page is a short silent loop. Big GIFs are slow to load (a 20 MB GIF is about 2 MB as an MP4), so convert first:
+
+```bash
+ffmpeg -i input.gif -movflags +faststart -pix_fmt yuv420p -vf "scale=960:-2:flags=lanczos,fps=15" -an -crf 28 public/media/pose/preview.mp4
+ffmpeg -i public/media/pose/preview.mp4 -frames:v 1 public/media/pose/preview.jpg
+```
+
+Then, in `projects.ts`, remove the `//` in front of the `tile:` line of that project and fix the file names and the description (`alt`). An actual `.gif` also works: `tile: { gif: '/media/x/preview.gif', alt: '…' }`. Without `tile`, the tile shows the YouTube thumbnail.
+
+### Fill in the empty figure slots on a project page
+
+In `projectPages.ts`, entries like `{ kind: 'figure', heading: 'Overview', src: '', alt: '', caption: '' }` are empty slots. They are not shown on the site. To fill one, copy the picture to `public/media/<project>/`, then set `src`, `width`, `height` (in pixels), `alt` (what the picture shows, for screen readers) and `caption`. The DODT papers have a `figures: []` list for the same purpose.
 
 ### Keep YouTube out of the page until someone presses play
 
-Project tiles show YouTube's thumbnail, which means the browser contacts YouTube when the page loads. To avoid that, save a 16:9 image per video in `public/media/` and set `poster: '/media/your-image.jpg'` on the project in `projects.ts`.
+Tiles without a `tile` show YouTube's thumbnail, so the browser contacts YouTube when the page loads. To avoid that, add a `tile` as above.
 
 ## Put it online with GitHub Pages
 
@@ -66,14 +79,14 @@ If the repository has a different name, the site will live under a sub-path. In 
 ## Before you share the link
 
 - [ ] Open the site on your phone and in both light and dark mode (the half-filled circle in the top right switches the theme).
-- [ ] Press the play button on each project video once.
+- [ ] Open each project page and press play on its videos once.
 - [ ] Check the author lists and venues in `publications.ts`.
-- [ ] When code for POSE is released, give the "Code (planned)" button on `pose.astro` an `href`.
+- [ ] When code for POSE is released, give the "Code (planned)" button on the POSE page in `projectPages.ts` an `href`.
 - [ ] Paste the link into a chat app to check the preview image (`public/og.png`).
 
 ## Notes
 
 - The site follows the visitor's light or dark setting and remembers a manual choice.
-- The home-page animation pauses when it is off screen or the tab is hidden, and shows a finished still map when the visitor's system asks for reduced motion.
+- Loop videos pause when they are off screen, and stay paused (with controls) when the visitor's system asks for reduced motion.
 - The email address is assembled in the browser, so it is not in the page source for simple scrapers.
 - The font is Archivo (variable), served from the site itself.

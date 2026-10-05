@@ -1,8 +1,9 @@
 import type { APIRoute } from 'astro';
+import { projectPages } from '../data/projectPages';
 import { site } from '../data/site';
 import { url } from '../lib/url';
 
-const paths = ['/', '/projects/pose/', '/cv/'];
+const paths = ['/', ...Object.keys(projectPages).map((id) => `/projects/${id}/`), '/cv/'];
 
 export const GET: APIRoute = () => {
   const lastmod = new Date().toISOString().slice(0, 10);

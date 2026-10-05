@@ -47,6 +47,7 @@ export const publications: Publication[] = [
     venue: 'IEEE Robotics and Automation Letters (RA-L), vol. 10, no. 11, pp. 11196–11203, 2025',
     href: 'https://ieeexplore.ieee.org/document/11159179/',
     links: [
+      { label: 'Project page', href: '/projects/sedem/' },
       { label: 'Paper', href: 'https://ieeexplore.ieee.org/document/11159179/' },
       { label: 'arXiv', href: 'https://arxiv.org/abs/2505.22880' },
       { label: 'Code', href: 'https://github.com/Shawn207/SEDEM' },
@@ -68,6 +69,7 @@ export const publications: Publication[] = [
     note: 'Over 100 citations.',
     href: 'https://ieeexplore.ieee.org/document/10323166',
     links: [
+      { label: 'Project page', href: '/projects/dodt/' },
       { label: 'Paper', href: 'https://ieeexplore.ieee.org/document/10323166' },
       { label: 'arXiv', href: 'https://arxiv.org/abs/2303.00132' },
       { label: 'Code', href: 'https://github.com/Shawn207/onboard_detector' },
@@ -89,6 +91,7 @@ export const publications: Publication[] = [
     venue: 'IEEE International Conference on Robotics and Automation (ICRA), 2023, pp. 10645–10651',
     href: 'https://arxiv.org/abs/2209.08258',
     links: [
+      { label: 'Project page', href: '/projects/dodt/' },
       { label: 'arXiv', href: 'https://arxiv.org/abs/2209.08258' },
       { label: 'Code', href: 'https://github.com/Shawn207/map_manager_pub' },
       { label: 'Video', href: 'https://www.youtube.com/watch?v=u5zblVx8KRc' },

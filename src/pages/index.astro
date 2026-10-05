@@ -3,11 +3,12 @@ import Base from '../layouts/Base.astro';
 import Ext from '../components/Ext.astro';
 import LinkChips from '../components/LinkChips.astro';
 import ProjectTile from '../components/ProjectTile.astro';
-import Viewport from '../components/Viewport.astro';
+import { platforms, sensorKit, fusionResult } from '../data/hardware';
 import { news } from '../data/news';
 import { projects } from '../data/projects';
 import { publications } from '../data/publications';
 import { site } from '../data/site';
+import { rich } from '../lib/rich';
 import { url } from '../lib/url';
 
 const jsonLd = {
@@ -32,7 +33,7 @@ const profiles = [
     <div class="hero-copy">
       <h1 class="hero-title" id="hero-title">{site.headline}</h1>
       <div class="hero-rest">
-        <p class="hero-lede">{site.bio}</p>
+        {site.background.map((p) => <p class="hero-lede" set:html={rich(p)} />)}
         {site.seeking && <p class="hero-seeking">{site.seeking}</p>}
         <ul class="hero-links">
           <li>
@@ -43,7 +44,52 @@ const profiles = [
         </ul>
       </div>
     </div>
-    <Viewport />
+    <figure class="portrait">
+      <img
+        src={url(site.portrait.src)}
+        srcset={`${url(site.portrait.small)} 640w, ${url(site.portrait.src)} ${site.portrait.width}w`}
+        sizes="(min-width: 1000px) 38vw, 90vw"
+        width={site.portrait.width}
+        height={site.portrait.height}
+        alt={site.portrait.alt}
+        fetchpriority="high"
+        decoding="async"
+      />
+    </figure>
+  </section>
+
+  <section class="wrap section split" id="research" aria-labelledby="research-h">
+    <div class="rail"><h2 id="research-h">Research interest</h2></div>
+    <div>
+      <p class="lede" set:html={rich(site.researchInterest)} />
+      <div class="themes">
+        {
+          site.themes.map((theme) => (
+            <div class="theme">
+              <h3>{theme.title}</h3>
+              <p>{theme.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section split" id="strengths" aria-labelledby="strengths-h">
+    <div class="rail"><h2 id="strengths-h">Strengths</h2></div>
+    <div>
+      <p class="lede" set:html={rich(site.strengths.lede)} />
+      <ul class="rows rows-wide">
+        {
+          site.strengths.layers.map((layer) => (
+            <li>
+              <span class="label">{layer.label}</span>
+              <p set:html={rich(layer.text)} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </section>
 
   <section class="wrap section split" aria-labelledby="recent-h">
@@ -53,7 +99,15 @@ const profiles = [
         news.map((item) => (
           <li>
             <time>{item.date}</time>
-            <p>{item.href ? <Ext href={item.href}>{item.text}</Ext> : item.text}</p>
+            <p>
+              {item.href ? <Ext href={item.href}>{item.text}</Ext> : item.text}
+              {item.links?.map((l) => (
+                <>
+                  {' '}
+                  <Ext class="news-link" href={l.href ?? '#'}>{l.label}</Ext>
+                </>
+              ))}
+            </p>
           </li>
         ))
       }
@@ -61,9 +115,84 @@ const profiles = [
   </section>
 
   <section class="wrap section split" id="projects" aria-labelledby="projects-h">
-    <div class="rail"><h2 id="projects-h">Projects</h2></div>
+    <div class="rail"><h2 id="projects-h">Project Highlights</h2></div>
     <div class="projects">
       {projects.map((project, i) => <ProjectTile project={project} feature={i === 0} />)}
+    </div>
+  </section>
+
+  <section class="wrap section split" id="hardware" aria-labelledby="hardware-h">
+    <div class="rail"><h2 id="hardware-h">Hardware</h2></div>
+    <div class="hardware">
+      <p class="lede">Robots and sensors I have built systems on and taken into the field.</p>
+      <div class="platforms">
+        {
+          platforms.map((p) => (
+            <article class="platform">
+              {p.photo && (
+                <img
+                  class="platform-photo"
+                  src={url(p.photo.src)}
+                  width={p.photo.width}
+                  height={p.photo.height}
+                  alt={p.photo.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              <div class="platform-body">
+                <h3>{p.name}</h3>
+                <p class="platform-kind">{p.kind}</p>
+                <ul class="rows rows-tight">
+                  {p.specs.map((spec) => (
+                    <li>
+                      <span class="label">{spec.label}</span>
+                      <p>{spec.text}</p>
+                    </li>
+                  ))}
+                </ul>
+                {p.links && p.links.length > 0 && <LinkChips links={p.links} />}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <h3 class="subhead">Sensors and compute</h3>
+      <ul class="rows rows-tight">
+        {
+          sensorKit.map((k) => (
+            <li>
+              <span class="label">{k.label}</span>
+              <p>{k.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <h3 class="subhead">Sensor fusion results</h3>
+      <figure class="figure">
+        <img
+          src={url(fusionResult.figure.src)}
+          width={fusionResult.figure.width}
+          height={fusionResult.figure.height}
+          alt={fusionResult.figure.alt}
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption>{fusionResult.caption}</figcaption>
+      </figure>
+      <ul class="stats">
+        {
+          fusionResult.stats.map((st) => (
+            <li>
+              <span class="stat-value">{st.value}</span>
+              <span class="stat-label">{st.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="hardware-more"><a href={url(fusionResult.link.href)}>{fusionResult.link.label}</a></p>
     </div>
   </section>
 
@@ -94,20 +223,6 @@ const profiles = [
       <p class="pubs-foot">
         * Equal contribution. <Ext href={site.links.scholar}>All publications on Google Scholar</Ext>.
       </p>
-    </div>
-  </section>
-
-  <section class="wrap section split" id="research" aria-labelledby="research-h">
-    <div class="rail"><h2 id="research-h">Research</h2></div>
-    <div class="themes">
-      {
-        site.themes.map((theme) => (
-          <div class="theme">
-            <h3>{theme.title}</h3>
-            <p>{theme.text}</p>
-          </div>
-        ))
-      }
     </div>
   </section>
 

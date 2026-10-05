@@ -366,7 +366,7 @@ a.chip:hover {
   padding-block: clamp(1rem, 3.5vw, 2.75rem) clamp(3rem, 6vw, 5rem);
 }
 
-/* On narrow screens the headline comes first, then the viewport, then the text. */
+/* On narrow screens the headline comes first, then the photo, then the text. */
 .hero-copy {
   display: contents;
 }
@@ -376,7 +376,7 @@ a.chip:hover {
   font-weight: 800;
   line-height: 1.04;
 }
-.hero .viewport {
+.hero .portrait {
   order: 2;
 }
 .hero-rest {
@@ -385,7 +385,7 @@ a.chip:hover {
 
 @media (min-width: 1000px) {
   .hero {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     gap: 3.5rem;
   }
   .hero-copy {
@@ -397,7 +397,17 @@ a.chip:hover {
 }
 
 .hero-lede {
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
+}
+.hero-lede a,
+.lede a,
+.prose a {
+  text-underline-offset: 0.18em;
+}
+.lede {
+  max-width: 68ch;
+  margin-bottom: 1.75rem;
+  font-size: 1.0625rem;
 }
 
 .hero-seeking {
@@ -425,52 +435,22 @@ a.chip:hover {
   font-weight: 560;
 }
 
-/* Hero viewport ---------------------------------------------------------------------------- */
+/* Portrait --------------------------------------------------------------------------------- */
 
-.viewport {
+.portrait {
+  max-width: 30rem;
   margin: 0;
 }
-
-.viewport-frame {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
-  border-radius: var(--radius);
-  background: var(--panel);
-}
-
-.viewport-frame canvas,
-.viewport-frame video,
-.viewport-poster {
-  position: absolute;
-  inset: 0;
+.portrait img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  border-radius: var(--radius);
+  background: var(--surface);
 }
-.viewport figcaption {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 0.8rem;
-  color: var(--ink-2);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-.viewport figcaption p {
-  max-width: 58ch;
-  margin: 0;
-}
-.viewport .note-still {
-  display: none;
-}
-.viewport[data-still] .note-live {
-  display: none;
-}
-.viewport[data-still] .note-still {
-  display: inline;
+@media (min-width: 1000px) {
+  .portrait {
+    max-width: none;
+  }
 }
 
 /* Video facade ----------------------------------------------------------------------------- */
@@ -823,4 +803,344 @@ a.chip:hover {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* Project tiles ---------------------------------------------------------------------------- */
+
+.project {
+  position: relative;
+}
+/* The whole tile opens the project page; the chips stay separately clickable. */
+.project-title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.project .chips {
+  position: relative;
+  z-index: 1;
+}
+.project-media:hover + .project-body .project-title a,
+.project:hover .project-title a {
+  color: var(--accent);
+}
+
+.tile {
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.tile video,
+.tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* News links ------------------------------------------------------------------------------- */
+
+.news .news-link {
+  margin-left: 0.2rem;
+  color: var(--accent);
+  font-weight: 560;
+  white-space: nowrap;
+}
+
+/* Strengths ---------------------------------------------------------------------------------- */
+
+.rows-wide li {
+  padding-block: 0.9rem;
+  border-top: 1px solid var(--rule);
+}
+.rows-wide {
+  gap: 0;
+}
+.rows-wide li:first-child {
+  border-top: 2px solid var(--ink);
+}
+@media (min-width: 640px) {
+  .rows-wide li {
+    grid-template-columns: 12rem minmax(0, 1fr);
+  }
+}
+.rows-tight {
+  gap: 0.8rem;
+}
+
+/* Hardware --------------------------------------------------------------------------------- */
+
+.platforms {
+  display: grid;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+.platform {
+  display: grid;
+  gap: 1.25rem 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--ink);
+}
+@media (min-width: 760px) {
+  .platform:has(.platform-photo) {
+    grid-template-columns: 12rem minmax(0, 1fr);
+  }
+}
+.platform-photo {
+  width: 100%;
+  max-width: 12rem;
+  height: auto;
+  border-radius: var(--radius);
+  background: #fff;
+}
+.platform h3 {
+  font-size: 1.3rem;
+  font-stretch: 110%;
+  line-height: 1.15;
+}
+.platform-kind {
+  margin: 0.25rem 0 1rem;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  font-weight: 540;
+}
+.platform .chips {
+  margin-top: 1rem;
+}
+.subhead {
+  margin: 0 0 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--ink);
+  font-size: 1.15rem;
+  font-stretch: 108%;
+}
+.hardware > .rows {
+  margin-bottom: 3rem;
+}
+
+.figure {
+  margin: 0 0 1.5rem;
+}
+.figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: #fff;
+}
+.figure figcaption,
+.clip figcaption {
+  max-width: 72ch;
+  margin-top: 0.7rem;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 3rem;
+  margin-bottom: 1.25rem;
+}
+.stat-value {
+  display: block;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-stretch: 112%;
+  font-weight: 800;
+  line-height: 1.05;
+}
+.stat-label {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+.hardware-more {
+  margin: 0;
+  font-weight: 560;
+}
+
+/* Project pages ---------------------------------------------------------------------------- */
+
+.back {
+  margin-bottom: 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 560;
+}
+.back a::before {
+  content: '\2190\00a0';
+}
+.authors-line {
+  margin-bottom: 0.2rem;
+  font-size: 1.125rem;
+  font-weight: 560;
+}
+.me {
+  font-weight: 760;
+}
+.meta-inline {
+  color: var(--ink-2);
+  font-size: 0.95rem;
+  font-weight: 450;
+}
+.page-head .meta {
+  margin-bottom: 0.4rem;
+}
+.page-head .chips {
+  margin-top: 1.1rem;
+}
+.prose .note {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+.prose h4 {
+  margin: 1.6rem 0 0.5rem;
+  font-size: 0.95rem;
+  font-stretch: 108%;
+  letter-spacing: 0.01em;
+}
+.paper + .paper {
+  margin-top: 2rem;
+}
+.paper-title {
+  max-width: 36ch;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  font-stretch: 108%;
+  line-height: 1.2;
+}
+.paper-authors {
+  margin-bottom: 0.2rem;
+  font-weight: 560;
+}
+.paper .meta {
+  margin-bottom: 0.2rem;
+  color: var(--ink-2);
+  font-size: 0.92rem;
+}
+.prose .paper {
+  max-width: 62rem;
+}
+.prose .paper .chips {
+  margin-top: 0.8rem;
+}
+
+.clips {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 900px) {
+  .clips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .clips .clip:first-child {
+    grid-column: 1 / -1;
+  }
+}
+.clip {
+  margin: 0;
+}
+.clip-frame {
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.clip-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.table-block {
+  margin-bottom: 1.5rem;
+}
+.table-caption,
+.table-foot {
+  max-width: 72ch;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.table-caption {
+  margin-bottom: 0.8rem;
+}
+.table-foot {
+  margin: 0.7rem 0 0;
+}
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+.table-wrap table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+.table-wrap th,
+.table-wrap td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.table-wrap thead th {
+  background: var(--surface);
+  font-size: 0.85rem;
+  font-weight: 640;
+}
+.table-wrap tbody th {
+  font-weight: 560;
+}
+.table-wrap tbody tr:last-child th,
+.table-wrap tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table-wrap .hl {
+  font-weight: 700;
+  color: var(--accent);
+}
+.bibs {
+  display: grid;
+  gap: 1.75rem;
+}
+.bib-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-stretch: 108%;
+}
+
+.table-wrap td.nw {
+  white-space: nowrap;
+}
+
+.split > * {
+  min-width: 0;
+}
+.bibtex pre {
+  max-width: 100%;
+}
+
+.bibs,
+.clips,
+.platforms {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 900px) {
+  .clips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.paper .table-block {
+  margin-top: 1.75rem;
+}
+.paper .figure {
+  margin-top: 1.75rem;
 }

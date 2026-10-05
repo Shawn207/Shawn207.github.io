@@ -1,0 +1,57 @@
+---
+// A short silent clip that plays like a GIF. It starts by itself, pauses while it is off screen, and
+// stays paused with visible controls for people who ask their system to reduce motion.
+import { url } from '../lib/url';
+
+interface Props {
+  src: string;
+  poster?: string;
+  label: string;
+  class?: string;
+  width?: number;
+  height?: number;
+}
+const { src, poster, label, class: className, width, height } = Astro.props;
+---
+
+<video
+  class:list={['loop', className]}
+  data-loop
+  src={url(src)}
+  poster={poster ? url(poster) : undefined}
+  width={width}
+  height={height}
+  autoplay
+  muted
+  loop
+  playsinline
+  preload="metadata"
+  role="img"
+  aria-label={label}
+>
+</video>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const videos = document.querySelectorAll<HTMLVideoElement>('video[data-loop]');
+  if (reduce.matches) {
+    videos.forEach((v) => {
+      v.pause();
+      v.removeAttribute('autoplay');
+      v.controls = true;
+      v.removeAttribute('role');
+    });
+  } else if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const v = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) void v.play().catch(() => {});
+          else v.pause();
+        });
+      },
+      { rootMargin: '80px' },
+    );
+    videos.forEach((v) => observer.observe(v));
+  }
+</script>

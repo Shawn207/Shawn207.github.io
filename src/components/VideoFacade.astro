@@ -5,8 +5,10 @@ interface Props {
   id: string;
   title: string;
   poster?: string;
+  /** Used for tiles: the picture is only a preview, and the project page link around it does the navigating. */
+  decorative?: boolean;
 }
-const { id, title, poster } = Astro.props;
+const { id, title, poster, decorative = false } = Astro.props;
 
 const watch = `https://www.youtube.com/watch?v=${id}`;
 const thumb = poster ? url(poster) : `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
@@ -24,11 +26,21 @@ const fallback = poster ? undefined : `https://i.ytimg.com/vi/${id}/hqdefault.jp
     decoding="async"
     referrerpolicy="no-referrer"
   />
-  <a class="facade-play" href={watch} target="_blank" rel="noopener noreferrer" aria-label={`Play video: ${title}`}>
-    <span class="facade-disc">
-      <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3.5v15l12.5-7.5z" fill="currentColor"></path></svg>
-    </span>
-  </a>
+  {
+    decorative ? (
+      <span class="facade-play" aria-hidden="true">
+        <span class="facade-disc">
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3.5v15l12.5-7.5z" fill="currentColor"></path></svg>
+        </span>
+      </span>
+    ) : (
+      <a class="facade-play" href={watch} target="_blank" rel="noopener noreferrer" aria-label={`Play video: ${title}`}>
+        <span class="facade-disc">
+          <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M6 3.5v15l12.5-7.5z" fill="currentColor"></path></svg>
+        </span>
+      </a>
+    )
+  }
 </div>
 
 <script>

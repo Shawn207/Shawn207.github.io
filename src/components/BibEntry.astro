@@ -1,0 +1,42 @@
+---
+interface Props {
+  id: string;
+  text: string;
+  label?: string;
+}
+const { id, text, label } = Astro.props;
+---
+
+<div class="bibtex">
+  {label && <h3 class="bib-label">{label}</h3>}
+  <pre id={`bibtex-${id}`} tabindex="0" role="region" aria-label={`BibTeX entry${label ? `: ${label}` : ''}`}><code>{text}</code></pre>
+  <button type="button" class="btn-quiet" data-copy={`bibtex-${id}`}>Copy BibTeX</button>
+  <span class="sr-only" role="status" data-copy-status></span>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    const status = button.parentElement?.querySelector<HTMLElement>('[data-copy-status]');
+    const label = button.textContent;
+    button.addEventListener('click', async () => {
+      const source = document.getElementById(button.dataset.copy ?? '');
+      if (!source) return;
+      try {
+        await navigator.clipboard.writeText(source.textContent ?? '');
+        button.textContent = 'Copied';
+        if (status) status.textContent = 'BibTeX copied to the clipboard.';
+      } catch (e) {
+        button.textContent = 'Press Ctrl+C to copy';
+        const range = document.createRange();
+        range.selectNodeContents(source);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+      setTimeout(() => {
+        button.textContent = label;
+        if (status) status.textContent = '';
+      }, 2200);
+    });
+  });
+</script>

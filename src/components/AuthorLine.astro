@@ -1,0 +1,19 @@
+---
+import type { Author } from '../data/projectPages';
+
+interface Props {
+  authors: Author[];
+}
+const { authors } = Astro.props;
+---
+
+<span class="authors">
+  {
+    authors.map((a, i) => (
+      <>
+        <span class:list={{ me: a.self }}>{a.name}{a.coFirst ? '*' : ''}</span>
+        {i < authors.length - 1 ? ', ' : ''}
+      </>
+    ))
+  }
+</span>

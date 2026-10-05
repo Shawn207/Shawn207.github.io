@@ -1,0 +1,120 @@
+---
+import type { GetStaticPaths } from 'astro';
+import AuthorLine from '../../components/AuthorLine.astro';
+import BibEntry from '../../components/BibEntry.astro';
+import ClipView from '../../components/ClipView.astro';
+import DataTable from '../../components/DataTable.astro';
+import FigureView from '../../components/FigureView.astro';
+import LinkChips from '../../components/LinkChips.astro';
+import Base from '../../layouts/Base.astro';
+import { projectPages } from '../../data/projectPages';
+import type { ProjectPage } from '../../data/projectPages';
+import { site } from '../../data/site';
+import { plain, rich, slugify } from '../../lib/rich';
+import { url } from '../../lib/url';
+
+export const getStaticPaths = (() =>
+  Object.values(projectPages).map((page) => ({ params: { slug: page.id }, props: { page } }))) satisfies GetStaticPaths;
+
+interface Props {
+  page: ProjectPage;
+}
+const { page } = Astro.props;
+
+const everyAuthor = [
+  ...(page.authors ?? []),
+  ...page.sections.flatMap((s) => (s.kind === 'paper' ? s.authors : [])),
+];
+const hasCoFirst = everyAuthor.some((a) => a.coFirst);
+
+const jsonLd = page.article
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'ScholarlyArticle',
+      headline: page.title,
+      author: (page.authors ?? []).map((a) => ({ '@type': 'Person', name: a.name })),
+      datePublished: page.article.datePublished,
+      sameAs: page.article.sameAs,
+      description: plain(page.description),
+    }
+  : undefined;
+
+const single = page.authors && page.authors.length > 0;
+---
+
+<Base
+  title={`${page.metaTitle} | ${site.name}`}
+  description={plain(page.description)}
+  path={`/projects/${page.id}/`}
+  current="project"
+  type="article"
+  jsonLd={jsonLd}
+>
+  <div class="wrap page-head">
+    <p class="back"><a href={url('/#projects')}>All project highlights</a></p>
+    <h1 class="page-title">{page.title}</h1>
+    {single && <p class="authors-line"><AuthorLine authors={page.authors!} />{hasCoFirst && <span class="meta-inline"> (* equal contribution)</span>}</p>}
+    {page.meta?.map((line) => <p class="meta" set:html={rich(line)} />)}
+    <LinkChips links={page.links} />
+  </div>
+
+  <div class="wrap">
+    <div class="page-media">
+      <ClipView clip={page.hero} />
+    </div>
+  </div>
+
+  {
+    page.sections.map((section) => {
+      if (section.kind === 'figure' && !section.src) {
+        // An empty slot: nothing is shown on the site. Fill `src` in src/data/projectPages.ts to show it.
+        return null;
+      }
+      const heading =
+        section.kind === 'bibtex' ? 'BibTeX' : section.kind === 'figure' ? (section.heading ?? '') : section.heading;
+      const id = section.kind === 'bibtex' ? 'bibtex' : slugify(heading);
+      return (
+        <section class="wrap section split" id={id} aria-labelledby={`${id}-h`}>
+          <div class="rail"><h2 id={`${id}-h`}>{heading}</h2></div>
+          <div class="prose">
+            {section.kind === 'text' && (
+              <>
+                {section.paragraphs.map((p) => <p set:html={rich(p)} />)}
+                {section.note && <p class="note" set:html={rich(section.note)} />}
+              </>
+            )}
+            {section.kind === 'list' && <ul>{section.items.map((item) => <li set:html={rich(item)} />)}</ul>}
+            {section.kind === 'figure' && <FigureView figure={section} />}
+            {section.kind === 'table' && <DataTable table={section.table} />}
+            {section.kind === 'videos' && (
+              <div class="clips">{section.clips.map((clip) => <ClipView clip={clip} />)}</div>
+            )}
+            {section.kind === 'paper' && (
+              <div class="paper">
+                <h3 class="paper-title">{section.title}</h3>
+                <p class="paper-authors"><AuthorLine authors={section.authors} /></p>
+                <p class="meta">{section.venue}</p>
+                <LinkChips links={section.links} />
+                <h4>Abstract</h4>
+                <p>{section.abstract}</p>
+                <h4>Contributions</h4>
+                <ul>{section.contributions.map((c) => <li set:html={rich(c)} />)}</ul>
+                <h4>Results</h4>
+                <ul>{section.results.map((r) => <li set:html={rich(r)} />)}</ul>
+                {section.table && <DataTable table={section.table} />}
+                {section.figures?.map((f) => (f.src ? <FigureView figure={f} /> : null))}
+              </div>
+            )}
+            {section.kind === 'bibtex' && (
+              <div class="bibs">
+                {section.entries.map((entry) => (
+                  <BibEntry id={entry.id} text={entry.text} label={entry.label} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    })
+  }
+</Base>
