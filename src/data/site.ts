@@ -23,7 +23,7 @@ export const site = {
   // Paragraphs under the name: who I am and where I come from.
   background: [
     'I am pursuing my Ph.D. degree in [Mechanical Engineering](https://www.meche.engineering.cmu.edu/) at [Carnegie Mellon University](https://www.cmu.edu/), in the Computational Engineering & Robotics Lab (CERLAB) under the supervision of Professor [Kenji Shimada](https://www.meche.engineering.cmu.edu/directory/bios/shimada-kenji.html).',
-    'Before my Ph.D., I received my M.S. in Mechanical Engineering from Carnegie Mellon University in 2023. Prior to that, I earned my B.E. in Mechanical Engineering with a minor in Computer Science from the [University of Pittsburgh](https://www.pitt.edu/) in 2021, through its dual-degree program with [Sichuan University](https://en.scu.edu.cn/).',
+    'Before my Ph.D., I received my M.S. in Mechanical Engineering from Carnegie Mellon University in 2023. Prior to that, I earned my B.S. in Mechanical Engineering with a minor in Computer Science from the [University of Pittsburgh](https://www.pitt.edu/) in 2021, through its dual-degree program with [Sichuan University](https://en.scu.edu.cn/).',
   ],
   // Delete this line (set to '') once you are no longer looking.
   seeking: 'Looking for 2027 internships in robotics, embodied AI, and autonomous driving.',
@@ -73,10 +73,14 @@ export const site = {
       what: 'Ph.D., Mechanical Engineering, Carnegie Mellon University',
       note: 'Robotics research in CERLAB, advised by Prof. Kenji Shimada',
     },
-    { when: '2023', what: 'M.S., Mechanical Engineering, Carnegie Mellon University' },
+    {
+      when: '2023',
+      what: 'M.S., Mechanical Engineering, Carnegie Mellon University',
+      note: 'Relevant coursework: Intro to Robot Learning (imitation learning: BC, DAgger; RL: Q‑learning, PPO), Intro to Deep Learning, Intro to Computer Vision',
+    },
     {
       when: '2021',
-      what: 'B.E., Mechanical Engineering, minor in Computer Science, University of Pittsburgh',
+      what: 'B.S., Mechanical Engineering, minor in Computer Science, University of Pittsburgh',
       note: 'Dual-degree program with Sichuan University',
     },
   ],
